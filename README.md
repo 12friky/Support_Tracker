@@ -1,62 +1,45 @@
 Support Tracker
 
-A simple Support Ticket Tracking System built with Laravel.
-This project helps manage and track customer/support requests efficiently.
+Laravel-based Support Activity Tracking System for managing daily support tasks, status updates, personnel tracking, activity handovers, and reporting.
 
- Features
-
- User authentication (Login/Register)
- Create support tickets
- Update ticket status (Open, In Progress, Resolved)
- Assign tickets to users/admins
- Dashboard overview
- Simple and clean UI
-
-
-
+Features
+User authentication (Login and Register)
+Create support tickets
+Update ticket status (Open, In Progress, Resolved)
+Assign tickets to users or admins
+Dashboard overview
+Simple and clean UI
 Tech Stack
+Laravel (PHP Framework)
+MySQL 
+Bootstrap 
+Blade Templates
+Installation
 
- Laravel (PHP Framework)
- MySQL / SQLite
- Bootstrap / Tailwind (if used)
- Blade Templates
-
-
- Installation
-
-Clone the project:
+Clone the repository
 git clone https://github.com/12friky/Support_Tracker.git
 cd Support_Tracker
 
-
-Install dependencies:
-
+Install dependencies
 composer install
 npm install && npm run dev
 
-
-Set up environment:
-
+Set up environment
 cp .env.example .env
 php artisan key:generate
 
-
-Configure database in `.env`, then run:
-
-
+Configure your database inside the .env file, then run migrations
 php artisan migrate
 
-
-Start server:
+Start the development server
 php artisan serve
 
-
-
 Author
- Developed by: Francis Ngumah
- GitHub:https://github.com/12friky
 
-
+Developed by: Francis Ngumah
+GitHub: https://github.com/12friky
 
 License
-This project is open-source.
+
+This project is open-source and free to use.
+
