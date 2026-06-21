@@ -6,7 +6,9 @@ A Laravel-based daily activity tracking system for applications support teams. P
 
 ## Login Credentials
 
-Three staff accounts are pre-seeded. Use these to log in at `/login`.
+After cloning and setting up the project run: php artisan migrate --seed
+
+ Use these to log in at `/login`.
 
 | # | Staff ID | Password | Name | Role | Department |
 |---|----------|----------|------|------|------------|
