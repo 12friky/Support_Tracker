@@ -14,21 +14,26 @@ class HandoverController extends Controller
             ? Carbon::parse($request->date)
             : now();
 
+        // Requirement: show the LATEST remark per activity for the selected day.
+        // We get all logs for the day, then keep only the most recent entry per activity.
         $handovers = ActivityLog::with(['activity', 'updatedBy'])
             ->whereDate('created_at', $date)
             ->latest()
             ->get()
+            ->groupBy('activity_id')          // group by activity
+            ->map(fn($group) => $group->first()) // keep only the latest log per activity
+            ->values()
             ->map(function (ActivityLog $log) {
                 $person = $log->updatedBy;
                 return (object) [
-                    'id'            => $log->id,
-                    'activity_id'   => $log->activity?->id,
-                    'activity_name' => $log->activity?->name ?? 'Unknown Activity',
-                    'status'        => $log->status,
-                    'remark'        => $log->remark ?? '-',
-                    'updated_by'    => $person?->name ?? 'System',
-                    'updated_at'    => $log->created_at->format('h:i A'),
-                    // Requirement 3: full bio details of the personnel
+                    'id'                => $log->id,
+                    'activity_id'       => $log->activity?->id,
+                    'activity_name'     => $log->activity?->name ?? 'Unknown Activity',
+                    'status'            => $log->status,
+                    'remark'            => $log->remark ?? '-',
+                    'updated_by'        => $person?->name ?? 'System',
+                    'updated_at'        => $log->created_at->format('h:i A'),
+                    'log_date'          => $log->created_at->format('l, j F Y'), // for date grouping header
                     'person_staff_id'   => $person?->staff_id,
                     'person_department' => $person?->department,
                     'person_shift'      => $person?->shift,

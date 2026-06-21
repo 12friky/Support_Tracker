@@ -172,7 +172,9 @@
     .handover-table tbody tr { border-bottom: 1px solid #f8f8fb; }
     .handover-table tbody td { padding: 15px 20px; font-size: 0.84rem; color: #444; vertical-align: middle; }
     .handover-table tbody tr:hover { background: #f9faff; }
-    .handover-table tbody tr.pending-row { background: #fffaf3; }
+    .handover-table tbody tr.pending-row { background: #fffaf3; border-left: 3px solid #f59e0b; }
+    .handover-table tbody tr.done-row    { background: #f9fffe; border-left: 3px solid #22c55e; opacity: 0.88; }
+    .handover-table tbody tr.done-row td { color: #6b7280; }
     .badge-pill {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 5px 10px; border-radius: 999px; font-size: 0.73rem; font-weight: 600;
@@ -262,12 +264,32 @@
         @if($handovers->isEmpty())
             <div class="empty-state">No activity updates recorded for this day yet.</div>
         @else
+            {{-- Date group header — makes it clear which day this handover belongs to --}}
+            <div style="padding: 14px 20px 10px; border-bottom: 1px solid #f0f0f5; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #aaa;">Handover Date</span>
+                    <div style="font-size: 1rem; font-weight: 800; color: #1a1a2e; margin-top: 2px;">
+                        {{ $date->format('l, j F Y') }}
+                        @if($date->isToday())
+                            <span style="margin-left: 8px; font-size: 0.72rem; font-weight: 600; background: #3b6cf8; color: #fff; padding: 2px 10px; border-radius: 20px; vertical-align: middle;">Today</span>
+                        @endif
+                    </div>
+                </div>
+                <div style="font-size: 0.8rem; color: #aaa;">
+                    {{ $stats['total'] }} {{ Str::plural('activity', $stats['total']) }} updated
+                    &nbsp;·&nbsp;
+                    <span style="color: #22c55e; font-weight: 600;">{{ $stats['completed'] }} done</span>
+                    &nbsp;·&nbsp;
+                    <span style="color: #f59e0b; font-weight: 600;">{{ $stats['pending'] }} pending</span>
+                </div>
+            </div>
+
             <table class="handover-table">
                 <thead>
                     <tr>
-                        <th>Activity</th>
-                        <th>Status</th>
-                        <th>Remark</th>
+                        <th>Activity Name</th>
+                        <th>Current Status</th>
+                        <th>Latest Remark</th>
                         <th>Updated By</th>
                         <th>Bio Details</th>
                         <th>Update Time</th>
@@ -276,16 +298,17 @@
                 </thead>
                 <tbody>
                     @foreach($handovers as $item)
-                    @php $person = null; @endphp
                         <tr
-                            class="{{ $item->status === 'Pending' ? 'pending-row' : '' }}"
+                            class="{{ $item->status === 'Pending' ? 'pending-row' : 'done-row' }}"
                             data-status="{{ $item->status }}"
                             data-activity="{{ $item->activity_name }}"
                             data-remark="{{ $item->remark }}"
                             data-updated="{{ $item->updated_by }}"
                             data-time="{{ $item->updated_at }}"
                         >
-                            <td><span class="badge-pill badge-info">{{ $item->activity_name }}</span></td>
+                            <td>
+                                <div style="font-weight: 600; color: #1a1a2e; font-size: .85rem;">{{ $item->activity_name }}</div>
+                            </td>
                             <td>
                                 @if($item->status === 'Pending')
                                     <span class="badge-pill badge-pending">&#8987; Pending</span>
@@ -293,25 +316,25 @@
                                     <span class="badge-pill badge-done">&#9989; Done</span>
                                 @endif
                             </td>
-                            <td>{{ $item->remark }}</td>
-                            <td><strong>{{ $item->updated_by }}</strong></td>
+                            <td style="max-width: 220px; word-break: break-word;">{{ $item->remark }}</td>
+                            <td><span style="font-weight: 600; color: #1a1a2e;">{{ $item->updated_by }}</span></td>
                             <td>
-                                <div style="font-size:.75rem;color:#777;line-height:1.7;">
-                                    @if($item->person_staff_id)<div>🪪 ID: <strong>{{ $item->person_staff_id }}</strong></div>@endif
-                                    @if($item->person_department)<div>🏢 {{ $item->person_department }}</div>@endif
-                                    @if($item->person_shift)<div>🕐 {{ $item->person_shift }}</div>@endif
-                                    @if($item->person_phone)<div>📞 {{ $item->person_phone }}</div>@endif
+                                <div style="font-size:.75rem;color:#777;line-height:1.8;">
+                                    @if($item->person_staff_id)<div>ID: <strong>{{ $item->person_staff_id }}</strong></div>@endif
+                                    @if($item->person_department)<div>{{ $item->person_department }}</div>@endif
+                                    @if($item->person_shift)<div>{{ $item->person_shift }}</div>@endif
+                                    @if($item->person_phone)<div>{{ $item->person_phone }}</div>@endif
                                     @if(!$item->person_staff_id && !$item->person_department)
                                         <span style="color:#ccc;">—</span>
                                     @endif
                                 </div>
                             </td>
-                            <td><strong>{{ $item->updated_at }}</strong></td>
+                            <td><strong style="color: #1a1a2e;">{{ $item->updated_at }}</strong></td>
                             <td>
                                 @if($item->status === 'Pending')
                                     <a href="{{ route('activities.update', ['id' => $item->activity_id]) }}" class="btn-continue">Continue Work</a>
                                 @else
-                                    <span style="color:#9ca3af; font-size:.78rem;">Completed</span>
+                                    <span style="color: #22c55e; font-size: .78rem; font-weight: 600;">Completed</span>
                                 @endif
                             </td>
                         </tr>
