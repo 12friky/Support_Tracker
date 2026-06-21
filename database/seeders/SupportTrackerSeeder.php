@@ -7,47 +7,51 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\UserSetting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class SupportTrackerSeeder extends Seeder
 {
     public function run(): void
     {
+        // ─── USERS ────────────────────────────────────────────────────────────
+        // Three distinct support team members with different roles & passwords
+
         $users = [
             [
-                'staff_id' => '123456',
-                'name' => 'Francis Ngumah',
-                'email' => 'francis@support.com',
-                'password' => bcrypt('1234'),
-                'role' => 'Admin',
-                'department' => 'Infrastructure',
-                'phone' => '+233 54 789 1122',
-                'location' => 'Accra, Ghana',
-                'shift' => '8:00 AM - 5:00 PM',
-                'is_active' => true,
+                'staff_id'   => '100001',
+                'name'       => 'Francis Ngumah',
+                'email'      => 'francis@support.com',
+                'password'   => Hash::make('Admin@1234'),
+                'role'       => 'Admin',
+                'department' => 'Infrastructure & Platforms',
+                'phone'      => '+233 54 789 1122',
+                'location'   => 'Accra, Ghana',
+                'shift'      => '08:00 AM – 05:00 PM',
+                'is_active'  => true,
             ],
             [
-                'staff_id' => '100001',
-                'name' => 'Jane Doe',
-                'email' => 'jane@support.com',
-                'password' => bcrypt('password'),
-                'role' => 'User',
-                'department' => 'Operations',
-                'phone' => '+233 20 111 2233',
-                'location' => 'Accra, Ghana',
-                'shift' => '9:00 AM - 6:00 PM',
-                'is_active' => true,
+                'staff_id'   => '100002',
+                'name'       => 'Abena Mensah',
+                'email'      => 'abena@support.com',
+                'password'   => Hash::make('Support@5678'),
+                'role'       => 'Support Engineer',
+                'department' => 'Applications Support',
+                'phone'      => '+233 20 111 2233',
+                'location'   => 'Accra, Ghana',
+                'shift'      => '09:00 AM – 06:00 PM',
+                'is_active'  => true,
             ],
             [
-                'staff_id' => '100002',
-                'name' => 'John Smith',
-                'email' => 'john@support.com',
-                'password' => bcrypt('password'),
-                'role' => 'User',
+                'staff_id'   => '100003',
+                'name'       => 'Kwame Asante',
+                'email'      => 'kwame@support.com',
+                'password'   => Hash::make('Engineer@9012'),
+                'role'       => 'Support Engineer',
                 'department' => 'Operations',
-                'phone' => '+233 24 555 6677',
-                'location' => 'Kumasi, Ghana',
-                'shift' => '8:30 AM - 5:30 PM',
-                'is_active' => true,
+                'phone'      => '+233 24 555 6677',
+                'location'   => 'Kumasi, Ghana',
+                'shift'      => '08:30 AM – 05:30 PM',
+                'is_active'  => true,
             ],
         ];
 
@@ -58,68 +62,90 @@ class SupportTrackerSeeder extends Seeder
             );
         }
 
-        $francis = User::where('staff_id', '123456')->first();
-        $jane = User::where('staff_id', '100001')->first();
-        $john = User::where('staff_id', '100002')->first();
+        $francis = User::where('staff_id', '100001')->first();
+        $abena   = User::where('staff_id', '100002')->first();
+        $kwame   = User::where('staff_id', '100003')->first();
+
+        // ─── ACTIVITIES ───────────────────────────────────────────────────────
 
         $activities = [
             [
-                'name' => 'Server Restart',
-                'description' => 'Scheduled server restart for maintenance',
-                'status' => 'Pending',
-                'assigned_to_id' => $jane?->id,
-                'created_by_id' => $francis?->id,
+                'name'               => 'Daily SMS Count vs Log Comparison',
+                'description'        => 'Compare the daily outbound SMS count against the SMS gateway logs to identify discrepancies.',
+                'status'             => 'Done',
+                'assigned_to_id'     => $abena?->id,
+                'created_by_id'      => $francis?->id,
+                'last_updated_by_id' => $abena?->id,
+            ],
+            [
+                'name'               => 'Database Backup Verification',
+                'description'        => 'Verify that the nightly database backup completed successfully and validate backup integrity.',
+                'status'             => 'Done',
+                'assigned_to_id'     => $kwame?->id,
+                'created_by_id'      => $francis?->id,
+                'last_updated_by_id' => $kwame?->id,
+            ],
+            [
+                'name'               => 'Application Server Health Check',
+                'description'        => 'Check CPU, memory, and disk usage on all application servers and report any anomalies.',
+                'status'             => 'Pending',
+                'assigned_to_id'     => $abena?->id,
+                'created_by_id'      => $francis?->id,
                 'last_updated_by_id' => $francis?->id,
             ],
             [
-                'name' => 'Email Ticket Follow-up',
-                'description' => 'Follow up on pending client email tickets',
-                'status' => 'Done',
-                'assigned_to_id' => $john?->id,
-                'created_by_id' => $francis?->id,
-                'last_updated_by_id' => $john?->id,
+                'name'               => 'Email Queue Monitoring',
+                'description'        => 'Monitor the email queue for failed or stuck jobs and resolve any delivery failures.',
+                'status'             => 'Pending',
+                'assigned_to_id'     => $kwame?->id,
+                'created_by_id'      => $francis?->id,
+                'last_updated_by_id' => $francis?->id,
             ],
             [
-                'name' => 'Database Backup',
-                'description' => 'Full backup of production database',
-                'status' => 'Done',
-                'assigned_to_id' => $francis?->id,
-                'created_by_id' => $francis?->id,
+                'name'               => 'API Endpoint Response Time Audit',
+                'description'        => 'Run response-time tests against all public-facing API endpoints and log results.',
+                'status'             => 'Done',
+                'assigned_to_id'     => $francis?->id,
+                'created_by_id'      => $francis?->id,
                 'last_updated_by_id' => $francis?->id,
             ],
         ];
 
-        foreach ($activities as $activityData) {
+        foreach ($activities as $actData) {
             $activity = Activity::updateOrCreate(
-                ['name' => $activityData['name']],
-                $activityData
+                ['name' => $actData['name']],
+                $actData
             );
 
+            // Create an activity log entry for each activity
             ActivityLog::updateOrCreate(
+                ['activity_id' => $activity->id, 'status' => $activity->status],
                 [
-                    'activity_id' => $activity->id,
-                    'status' => $activity->status,
-                ],
-                [
-                    'remark' => $activity->status === 'Done'
-                        ? 'Completed successfully.'
-                        : 'Awaiting follow-up.',
+                    'remark'        => $activity->status === 'Done'
+                        ? 'Completed successfully. No issues found.'
+                        : 'Work in progress — pending handover to next shift.',
                     'updated_by_id' => $activity->last_updated_by_id,
                 ]
             );
         }
 
-        if ($francis) {
-            UserSetting::updateOrCreate(
-                ['user_id' => $francis->id],
-                [
-                    'email_notifications' => true,
-                    'sms_alerts' => false,
-                    'auto_save_drafts' => true,
-                    'timezone' => 'GMT',
-                    'language' => 'English',
-                ]
-            );
+        // ─── USER SETTINGS ────────────────────────────────────────────────────
+
+        $settingsDefaults = [
+            'email_notifications' => true,
+            'sms_alerts'          => false,
+            'auto_save_drafts'    => true,
+            'timezone'            => 'GMT',
+            'language'            => 'English',
+        ];
+
+        foreach ([$francis, $abena, $kwame] as $user) {
+            if ($user) {
+                UserSetting::updateOrCreate(
+                    ['user_id' => $user->id],
+                    $settingsDefaults
+                );
+            }
         }
     }
 }
