@@ -473,17 +473,6 @@
                 @endif
             </form>
 
-            <div class="divider">
-                <span></span>
-                <p>demo credentials</p>
-                <span></span>
-            </div>
-
-            <div class="hint-box">
-                <i class="ti ti-info-circle"></i>
-                <span>Staff ID: <strong>123456</strong> &nbsp;·&nbsp; Password: <strong>1234</strong></span>
-            </div>
-
             <div class="form-footer">
                 <i class="ti ti-lock"></i>
                 <span>Secured connection · Staff access only</span>

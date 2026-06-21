@@ -92,14 +92,12 @@
         <h1>Profile</h1>
     </div>
     <div class="page-header-right">
-        <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
         <div class="user-chip">
-            <div class="user-avatar">FN</div>
+            <div class="user-avatar">{{ strtoupper(substr(session('staff_user_name', 'ST'), 0, 2)) }}</div>
             <div class="user-info">
-                <div class="user-name">Francis Ngumah</div>
-                <div class="user-role">Support Engineer</div>
+                <div class="user-name">{{ session('staff_user_name', 'Staff') }}</div>
+                <div class="user-role">{{ session('staff_user_role', 'Support') }}</div>
             </div>
-            <span style="color:#aaa;font-size:.8rem;">▾</span>
         </div>
     </div>
 </header>
@@ -113,7 +111,7 @@
 
     <div class="profile-card">
         <div class="profile-top">
-            <div class="avatar-large">FN</div>
+            <div class="avatar-large">{{ strtoupper(substr($user->name ?? 'ST', 0, 2)) }}</div>
             <div class="profile-meta">
                 <h3>{{ $user->name ?? 'Unknown User' }}</h3>
                 <p>{{ $user->role ?? 'User' }} · {{ $user->department ?: 'Support Team' }}</p>
@@ -123,28 +121,52 @@
         <div class="grid-2">
             <div class="panel">
                 <h4>Personal Information</h4>
+                <div class="info-row"><span class="info-label">Staff ID</span><span class="info-value">{{ $user->staff_id ?? '-' }}</span></div>
                 <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ $user->email ?? '-' }}</span></div>
+                <div class="info-row"><span class="info-label">Department</span><span class="info-value">{{ $user->department ?: '-' }}</span></div>
                 <div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ $user->phone ?: '-' }}</span></div>
                 <div class="info-row"><span class="info-label">Location</span><span class="info-value">{{ $user->location ?: '-' }}</span></div>
                 <div class="info-row"><span class="info-label">Shift</span><span class="info-value">{{ $user->shift ?: '-' }}</span></div>
             </div>
             <div class="panel">
                 <h4>Update Profile</h4>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="profileName">Full Name</label>
-                        <input id="profileName" type="text" value="{{ $user->name ?? '' }}">
+
+                @if(session('profile_success'))
+                    <div style="background:#EDFAF4;color:#15803d;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;font-weight:600;">
+                        {{ session('profile_success') }}
                     </div>
-                    <div class="form-group">
-                        <label for="profileEmail">Email</label>
-                        <input id="profileEmail" type="email" value="{{ $user->email ?? '' }}">
+                @endif
+
+                @if($errors->has('profile'))
+                    <div style="background:#FEF2F2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;">
+                        {{ $errors->first('profile') }}
                     </div>
-                    <div class="form-group">
-                        <label for="profilePhone">Phone</label>
-                        <input id="profilePhone" type="text" value="{{ $user->phone ?? '' }}">
+                @endif
+
+                <form method="POST" action="{{ route('profile.update') }}">
+                    @csrf
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input id="profileName" type="text" name="name"
+                                   value="{{ old('name', $user->name ?? '') }}" required>
+                            @error('name')<div style="color:#ef4444;font-size:.75rem;margin-top:4px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone</label>
+                            <input id="profilePhone" type="text" name="phone"
+                                   value="{{ old('phone', $user->phone ?? '') }}" placeholder="+233 XX XXX XXXX">
+                            @error('phone')<div style="color:#ef4444;font-size:.75rem;margin-top:4px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="profileLocation">Location</label>
+                            <input id="profileLocation" type="text" name="location"
+                                   value="{{ old('location', $user->location ?? '') }}" placeholder="e.g. Accra, Ghana">
+                            @error('location')<div style="color:#ef4444;font-size:.75rem;margin-top:4px;">{{ $message }}</div>@enderror
+                        </div>
+                        <button type="submit" class="btn-save">Save Changes</button>
                     </div>
-                    <button class="btn-save">Save Changes</button>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -152,28 +174,53 @@
             <div class="panel">
                 <h4>Recent Activity</h4>
                 <ul class="activity-list">
-                    @foreach($recentActivities as $item)
-                    <li><span>{{ $item->activity->name ?? 'Activity' }}</span><span>{{ $item->created_at->diffForHumans() }}</span></li>
-                    @endforeach
+                    @forelse($recentActivities as $item)
+                    <li>
+                        <span>{{ $item->activity->name ?? 'Activity' }}</span>
+                        <span style="color:#aaa;font-size:.78rem;">{{ $item->created_at->diffForHumans() }}</span>
+                    </li>
+                    @empty
+                    <li style="color:#aaa;font-size:.82rem;">No recent activity yet.</li>
+                    @endforelse
                 </ul>
             </div>
             <div class="panel">
                 <h4>Change Password</h4>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="currentPassword">Current Password</label>
-                        <input id="currentPassword" type="password" placeholder="Enter current password">
+
+                @if(session('password_success'))
+                    <div style="background:#EDFAF4;color:#15803d;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;font-weight:600;">
+                        {{ session('password_success') }}
                     </div>
-                    <div class="form-group">
-                        <label for="newPassword">New Password</label>
-                        <input id="newPassword" type="password" placeholder="Enter new password">
+                @endif
+
+                @if($errors->has('password'))
+                    <div style="background:#FEF2F2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;">
+                        {{ $errors->first('password') }}
                     </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input id="confirmPassword" type="password" placeholder="Confirm new password">
+                @endif
+
+                <form method="POST" action="{{ route('profile.password') }}">
+                    @csrf
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input id="currentPassword" type="password" name="current_password"
+                                   placeholder="Enter current password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input id="newPassword" type="password" name="new_password"
+                                   placeholder="Min 6 characters" required>
+                            @error('new_password')<div style="color:#ef4444;font-size:.75rem;margin-top:4px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input id="confirmPassword" type="password" name="new_password_confirmation"
+                                   placeholder="Repeat new password" required>
+                        </div>
+                        <button type="submit" class="btn-save">Update Password</button>
                     </div>
-                    <button class="btn-save">Update Password</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>

@@ -117,12 +117,11 @@
         <h1>Reports</h1>
     </div>
     <div class="page-header-right">
-        <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
         <div class="user-chip">
-            <div class="user-avatar">ST</div>
+            <div class="user-avatar">{{ strtoupper(substr(session('staff_user_name', 'ST'), 0, 2)) }}</div>
             <div class="user-info">
-                <div class="user-name">Staff User</div>
-                <div class="user-role">Support</div>
+                <div class="user-name">{{ session('staff_user_name', 'Staff') }}</div>
+                <div class="user-role">{{ session('staff_user_role', 'Support') }}</div>
             </div>
         </div>
     </div>

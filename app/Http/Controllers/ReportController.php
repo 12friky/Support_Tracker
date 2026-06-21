@@ -9,8 +9,7 @@ use Carbon\Carbon;
 class ReportController extends Controller
 {
     /**
-     * Show reports with optional server-side date-range filtering.
-     * Requirement 5: "querying of activity histories based on custom durations"
+     * Display activity log history with optional date-range and keyword filtering.
      */
     public function index(Request $request)
     {
@@ -22,7 +21,7 @@ class ReportController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : null;
 
-        $search = $request->input('search', '');
+        $search = trim($request->input('search', ''));
 
         $query = ActivityLog::with(['activity', 'updatedBy'])->latest();
 
@@ -34,7 +33,7 @@ class ReportController extends Controller
             $query->where('created_at', '<=', $endDate);
         }
 
-        if ($search) {
+        if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('status', 'like', "%{$search}%")
                   ->orWhere('remark', 'like', "%{$search}%")
@@ -43,9 +42,9 @@ class ReportController extends Controller
             });
         }
 
-        $reports    = $query->get();
-        $totalCount = $reports->count();
-        $doneCount  = $reports->where('status', 'Done')->count();
+        $reports      = $query->get();
+        $totalCount   = $reports->count();
+        $doneCount    = $reports->where('status', 'Done')->count();
         $pendingCount = $reports->where('status', 'Pending')->count();
 
         return view('reports.index', compact(

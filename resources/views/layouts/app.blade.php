@@ -193,13 +193,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('users.index') }}"
-                       class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <span class="nav-icon">👥</span>
-                        Users
-                    </a>
-                </li>
-                <li>
                     <a href="{{ route('handover') }}"
                        class="{{ request()->routeIs('handover') ? 'active' : '' }}">
                         <span class="nav-icon">📋</span>
@@ -211,6 +204,13 @@
                        class="{{ request()->routeIs('reports') ? 'active' : '' }}">
                         <span class="nav-icon">📄</span>
                         Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('users.index') }}"
+                       class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                        <span class="nav-icon">👥</span>
+                        Users
                     </a>
                 </li>
             </ul>

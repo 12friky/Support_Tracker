@@ -48,12 +48,6 @@
     }
     .title-row-left h2 { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; margin: 0 0 4px; }
     .title-row-left p { font-size: 0.82rem; color: #999; margin: 0; }
-    .btn-add {
-        display: inline-flex; align-items: center; gap: 8px;
-        background: #3b6cf8; color: #fff; border: none; border-radius: 10px;
-        padding: 10px 18px; font-size: 0.85rem; font-weight: 600;
-        cursor: pointer; box-shadow: 0 2px 8px rgba(59,108,248,.25);
-    }
 
     .stats-strip { display: flex; gap: 16px; margin-bottom: 24px; }
     .strip-card {
@@ -103,14 +97,12 @@
         <h1>Users</h1>
     </div>
     <div class="page-header-right">
-        <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
         <div class="user-chip">
-            <div class="user-avatar">FN</div>
+            <div class="user-avatar">{{ strtoupper(substr(session('staff_user_name', 'ST'), 0, 2)) }}</div>
             <div class="user-info">
-                <div class="user-name">Francis Ngumah</div>
-                <div class="user-role">Support Engineer</div>
+                <div class="user-name">{{ session('staff_user_name', 'Staff') }}</div>
+                <div class="user-role">{{ session('staff_user_role', 'Support') }}</div>
             </div>
-            <span style="color:#aaa;font-size:.8rem;">▾</span>
         </div>
     </div>
 </header>
@@ -127,7 +119,6 @@
             <h2>Team Members</h2>
             <p>Manage users and support roles in the system</p>
         </div>
-        <button class="btn-add">＋ Add User</button>
     </div>
 
     <div class="stats-strip">

@@ -18,8 +18,8 @@ class UserSetting extends Model
 
     protected $casts = [
         'email_notifications' => 'boolean',
-        'sms_alerts' => 'boolean',
-        'auto_save_drafts' => 'boolean',
+        'sms_alerts'          => 'boolean',
+        'auto_save_drafts'    => 'boolean',
     ];
 
     public function user(): BelongsTo

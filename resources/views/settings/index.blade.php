@@ -82,14 +82,12 @@
         <h1>Settings</h1>
     </div>
     <div class="page-header-right">
-        <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
         <div class="user-chip">
-            <div class="user-avatar">FN</div>
+            <div class="user-avatar">{{ strtoupper(substr(session('staff_user_name', 'ST'), 0, 2)) }}</div>
             <div class="user-info">
-                <div class="user-name">Francis Ngumah</div>
-                <div class="user-role">Support Engineer</div>
+                <div class="user-name">{{ session('staff_user_name', 'Staff') }}</div>
+                <div class="user-role">{{ session('staff_user_role', 'Support') }}</div>
             </div>
-            <span style="color:#aaa;font-size:.8rem;">▾</span>
         </div>
     </div>
 </header>
@@ -126,38 +124,8 @@
                     <option {{ ($settings && $settings->language === 'French') ? 'selected' : '' }}>French</option>
                 </select>
             </div>
-                <button class="btn-save">Save Changes</button>
-                <hr style="margin:14px 0; border:none; border-top:1px solid #eef0f5;">
-                <h3 style="margin-top:8px;">Frontend Profile (local-only)</h3>
-                <div class="form-group">
-                    <label for="displayName">Display name</label>
-                    <input id="displayName" type="text" value="{{ $user->name ?? '' }}" placeholder="e.g. Francis Ngumah">
-                </div>
-                <div class="form-group">
-                    <label for="displayRole">Role</label>
-                    <input id="displayRole" type="text" value="{{ $user->role ?? '' }}" placeholder="e.g. Support Engineer">
-                </div>
-                <button class="btn-save" id="saveDisplay">Save Display Name</button>
-                <div id="displaySaved" style="display:none;margin-top:10px;color:#16a34a;font-weight:600;">Saved locally</div>
+            <button class="btn-save">Save Changes</button>
         </div>
     </div>
 </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            const nameInput = document.getElementById('displayName');
-            const roleInput = document.getElementById('displayRole');
-            const saveBtn = document.getElementById('saveDisplay');
-            const savedMsg = document.getElementById('displaySaved');
-            const existing = window.SupportTracker?.getUser() || {};
-            if (existing.name) nameInput.value = existing.name;
-            if (existing.role) roleInput.value = existing.role;
-
-            saveBtn.addEventListener('click', function(){
-                const u = { name: nameInput.value.trim() || 'Francis Ngumah', role: roleInput.value.trim() || 'Support Engineer' };
-                window.SupportTracker.setUser(u);
-                savedMsg.style.display = 'block';
-                setTimeout(()=> savedMsg.style.display = 'none', 2000);
-            });
-        });
-    </script>
 @endsection
